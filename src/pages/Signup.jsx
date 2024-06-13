@@ -1,7 +1,86 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+
+const Signup = () => {
+  const navigate = useNavigate();
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [nickname, setNickname] = useState("");
+
+  // async로 비동기함수 생성
+  const handleSubmit = async (e) => {
+    // 페이지가 새로고침되는 기본 동작을 막음
+    e.preventDefault();
+    // 오류가 발생할 수 있는 코드를 작성(catch,finally)
+    try {
+      // 주어진 url로 http post요청을 보냄
+      // await로 요청이 끝날때까지 기다림
+      // 요청이 완료되면 변수 안에 넣음
+      const response = await axios.post(
+        "https://moneyfulpublicpolicy.co.kr/register",
+        {
+          id,
+          password,
+          nickname,
+        } // body로 보냄
+      );
+
+      console.log(response);
+      const data = response.data;
+      if (data.success) {
+        confirm("회원가입이 완료되었습니다.");
+        navigate(`/login`);
+      } else {
+        alert("Signup failed");
+      }
+    } catch (error) {
+      console.error("Signup error : ", error?.response?.data?.message);
+      alert("Signup failed", error?.response?.data?.message);
+    }
+  };
+
+  const handleToLogin = () => {
+    navigate(`/login`);
+  };
+
+  return (
+    <>
+      <LoginContainer>
+        <Title>회원가입</Title>
+        <LoginBox>
+          <form onSubmit={handleSubmit}>
+            <p>아이디</p>
+            <Input
+              type="text"
+              placeholder="아이디"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+            />
+            <p>비밀번호</p>
+            <Input
+              type="password"
+              placeholder="비밀번호"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <p>닉네임</p>
+            <Input
+              type="text"
+              placeholder="닉네임"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+            />
+            <br />
+            <Button type="submit">회원가입</Button>
+            <Button onClick={handleToLogin}>로그인</Button>
+          </form>
+        </LoginBox>
+      </LoginContainer>
+    </>
+  );
+};
 
 const LoginContainer = styled.div`
   display: grid;
@@ -58,79 +137,5 @@ const Button = styled.button`
     background-color: #28b2a5;
   }
 `;
-
-const Signup = () => {
-  const navigate = useNavigate();
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
-
-  // async로 비동기함수 생성
-  const handleSubmit = async (e) => {
-    // 페이지가 새로고침되는 기본 동작을 막음
-    e.preventDefault();
-    // 오류가 발생할 수 있는 코드를 작성(catch,finally)
-    try {
-      // 주어진 url로 http post요청을 보냄
-      // await로 요청이 끝날때까지 기다림
-      // 요청이 완료되면 변수 안에 넣음
-      const response = await axios.post(
-        "https://moneyfulpublicpolicy.co.kr/register",
-        {
-          id,
-          password,
-          nickname,
-        } // body로 보냄
-      );
-
-      console.log(response);
-      const data = response.data;
-      if (data.success) {
-        navigate(`/login`);
-      } else {
-        alert("Signup failed");
-      }
-    } catch (error) {
-      console.error("Signup error : ", error);
-      alert("Signup failed");
-    }
-  };
-
-  return (
-    <>
-      <LoginContainer>
-        <Title>회원가입</Title>
-        <LoginBox>
-          <form onSubmit={handleSubmit}>
-            <p>아이디</p>
-            <Input
-              type="text"
-              placeholder="아이디"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-            />
-            <p>비밀번호</p>
-            <Input
-              type="password"
-              placeholder="비밀번호"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <p>닉네임</p>
-            <Input
-              type="text"
-              placeholder="닉네임"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-            />
-            <br />
-            <Button type="submit">회원가입</Button>
-            <Button type="submit">로그인</Button>
-          </form>
-        </LoginBox>
-      </LoginContainer>
-    </>
-  );
-};
 
 export default Signup;
