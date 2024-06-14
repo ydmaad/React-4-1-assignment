@@ -2,6 +2,42 @@ import { Section } from "../pages/Home";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { ExpensesProvider } from "../context/ExpensesProvider";
+import { useQuery } from "@tanstack/react-query";
+import { getExpense } from "../shared/expense";
+
+export default function ExpenseList() {
+  const navigate = useNavigate();
+
+  const {
+    data: expenses = [],
+    isLoading,
+    error,
+  } = useQuery({ queryKey: ["expense"], queryFn: getExpense });
+
+  console.log("isLoading:", isLoading);
+  console.log("expense:", expenses);
+
+  return (
+    <Section>
+      <ExpenseItemList>
+        {expenses.map((expense) => (
+          <ExpenseItem
+            key={expense.id}
+            onClick={() => {
+              navigate(`/detail/${expense.id}`);
+            }}
+          >
+            <ExpenseDetails>
+              <span>{expense.date}</span>
+              <span>{`${expense.item} - ${expense.description}`}</span>
+            </ExpenseDetails>
+            <span>{expense.amount.toLocaleString()} 원</span>
+          </ExpenseItem>
+        ))}
+      </ExpenseItemList>
+    </Section>
+  );
+}
 
 const ExpenseItemList = styled.div`
   display: flex;
@@ -60,28 +96,3 @@ const ExpenseDetails = styled.div`
     }
   }
 `;
-
-export default function ExpenseList({ expenses }) {
-  const navigate = useNavigate();
-
-  return (
-    <Section>
-      <ExpenseItemList>
-        {expenses.map((expense) => (
-          <ExpenseItem
-            key={expense.id}
-            onClick={() => {
-              navigate(`/detail/${expense.id}`);
-            }}
-          >
-            <ExpenseDetails>
-              <span>{expense.date}</span>
-              <span>{`${expense.item} - ${expense.description}`}</span>
-            </ExpenseDetails>
-            <span>{expense.amount.toLocaleString()} 원</span>
-          </ExpenseItem>
-        ))}
-      </ExpenseItemList>
-    </Section>
-  );
-}

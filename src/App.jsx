@@ -4,13 +4,16 @@ import "./App.css";
 
 import SharedRouter from "./shared/Router";
 import { AuthProvider } from "./context/AuthContext";
+import QueryClientSetup from "./QueryClientSetup";
 
 function App() {
   return (
     <>
-      <AuthProvider>
-        <SharedRouter />
-      </AuthProvider>
+      <QueryClientSetup>
+        <AuthProvider>
+          <SharedRouter />
+        </AuthProvider>
+      </QueryClientSetup>
     </>
   );
 }
